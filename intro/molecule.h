@@ -36,5 +36,8 @@ class Molecule
 	// default constructor
 	Molecule();
 
+	// read-from-file constructor
+	Molecule(string filename, int q);
+
 	~Molecule();
 };

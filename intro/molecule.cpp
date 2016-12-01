@@ -1,5 +1,8 @@
 #include "molecule.h"
 #include <cstdio>
+#include <cassert>
+#include <fstream>
+#include <iostream>
 
 /********************************************************
  print_geom()
@@ -121,6 +124,41 @@ double Molecule::torsion(int a1, int a2, int a3, int a4)
 Molecule::Molecule(){}
 
 /********************************************************
+ Molecule(string filename, int q);
+  Default constructor. Constructs an object of type Molecule.
+ Params:
+  string filename - name of file
+  int q - charge
+ Returns:
+  N/A
+  Creates a new object of type Molecule
+ ********************************************************/
+Molecule::Molecule(string filename, int q)
+{
+	// open file
+	ifstream ifstream(filename);
+	assert(ifstream.good());
+
+	// setting variables
+	charge = q;
+	ifstream >> natoms;
+
+	// allocating memory for matrices
+        zvals = new int[natoms];
+        geom = new double*[natoms];
+        for(int i=0; i<natoms; i++)
+        {
+                geom[i] = new double[3];
+        }
+
+	// setting values in matrices
+	for(int i=0; i<natoms; i++)
+	{
+		ifstream >> zvals[i] >> geom[i][0] >> geom[i][1] >> geom[i][2];
+	}
+}
+
+/********************************************************
  translate(double x, double y, double z)
   Deconstructor. Deconstructs an object of type Molecule.
  Params:
@@ -129,5 +167,15 @@ Molecule::Molecule(){}
   N/A
   Deconstructs a Molecule object
  ********************************************************/
-Molecule::~Molecule(){}
+Molecule::~Molecule()
+{
+        // delete matrices
+        delete[] zvals;
+        for(int i=0; i<natoms; i++)
+        {
+                delete[] geom[i];
+        }
+        delete[] geom;
+}
+
 
